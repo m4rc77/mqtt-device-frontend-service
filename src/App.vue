@@ -25,6 +25,7 @@ export default {
   },
   data () {
     return {
+      DEFAULT_TITLE: 'mqtt-device-frontent-service',
       title: 'mqtt-device-frontent-service',
       currentRadio: '',
       startTime: new Date().getTime(),
@@ -66,19 +67,29 @@ export default {
     this.client.on('message', function (topic, message) {
       var msg = "'" + message.toString() + "' on " + topic
       console.log(msg)
-      self.changeRadio(self.getUrl(topic), self.getName(topic))
+      self.changeRadio(topic)
     })
   },
   methods: {
-    changeRadio (url, name) {
-      if (url !== null) {
+    changeRadio (topic) {
+      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
+        // topic exists and is configured ...
+        let url = this.getUrl(topic)
+        let name = this.getName(topic)
+
         this.currentRadio = url
-        this.title = name
+        this.title = name === '' ? this.DEFAULT_TITLE : name
         console.log('Changed radio to ' + name + ' / ' + url)
+      } else if (this.topics.hasOwnProperty(topic) && this.topics[topic] == null) {
+        // topic exists but is null ... ignore command
+      } else {
+        // Missing topic definition
+        this.currentRadio = ''
+        this.title = 'NO ACTION for ' + topic
       }
     },
     getUrl (topic) {
-      if (this.topics.hasOwnProperty(topic)) {
+      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
         return this.topics[topic].url
       } else {
         return ''
@@ -86,7 +97,7 @@ export default {
     },
     getName (topic) {
       // if (names.hasOwnProperty(topic)) {
-      if (this.topics.hasOwnProperty(topic)) {
+      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
         // return names[topic]
         return this.topics[topic].title
       } else {
