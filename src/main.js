@@ -9,16 +9,11 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   components: { App },
-  template: '<App/>',
-  // template: '<App broker="' + window.config.broker + '" topics=' + window.config.topics + ' />',
-  // propsData: {
-  //   broker: window.config.broker,
-  //   topics: window.config.topics
-  // },
-  // data: {
-  //   broker: window.config.broker,
-  //   topics: window.config.topics
-  // },
-  // TODO is this really the only option???
-  render: h => h(App, {props: {broker: window.config.broker, topics: window.config.topics}})
+
+  template: '<App :broker="config.broker" :topics="config.topics" />',
+  computed: {
+    config () {
+      return window.config
+    }
+  }
 })
