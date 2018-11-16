@@ -10,7 +10,7 @@ new Vue({
   el: '#app',
   components: { App },
 
-  template: '<App :broker="config.broker" :topics="config.topics" />',
+  template: '<App :mqttConfig="config.mqttConfig" :inputConfig="config.inputConfig" :infoUrls="config.infoUrls"/>',
   computed: {
     config () {
       return window.config

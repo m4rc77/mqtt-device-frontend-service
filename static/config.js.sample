@@ -1,18 +1,28 @@
 window.config = {
-  'broker': 'ws://your-broker-here:9001',
-  'topics': {
-    'your/special/topic/22': {
-      'url': 'http://www.google.ch',
-      'title': 'Google CH'
-    },
-    'your/special/topic/42': {
-      'url': 'http://www.test.ch/',
-      'title': 'Test'
+  'mqttConfig': {
+    'broker': 'ws://your-broker-here:9001',
+    'statusTopic': 'your/special/topic/status',
+    'inputTopic': 'your/special/topic/input'
+  },
+  'inputConfig': {
+    'noUrlSelectedMsg': 'No input received!',
+    'inputValueMapping': {
+      1: {
+        'url': 'http://www.google.c',
+        'title': 'Google CH'
+      },
+      2: {
+        'url': 'http://www.test.ch/',
+        'title': 'Test'
+      },
+      0: {
+        'url': null,
+        'title': null
+      }
     }
-    'your/special/topic/99': {
-      'url': '',
-      'title': ''
-    },
-    'your/special/topic/999': null
+  },
+  'infoUrls': {
+    'info1': 'https://time.is/',
+    'info2': 'http://www.myip.ch/'
   }
-};
+}

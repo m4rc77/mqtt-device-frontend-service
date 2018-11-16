@@ -1,6 +1,8 @@
 # mqtt-device-frontend-service
 
-Simple web-application that shows configured web pages, if messages do arrive on given MQTT topics.
+Simple web-application that shows configured web pages in a `<iframe>`, if messages do arrive on a given MQTT topic.
+
+Hint: Be aware that pages may send http header `X-Frame-Options` if so they can not be included in a `iframe`!
 
 ## Build Setup
 

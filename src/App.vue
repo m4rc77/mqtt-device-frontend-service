@@ -1,10 +1,16 @@
 <template>
   <div id="app">
-    <h2>{{title}}</h2>
-    <iframe v-if="currentRadio" :src="currentRadio">
-
-    </iframe>
-    <p v-if="!currentRadio">No Radio station selected!</p>
+    <h1>{{title}}</h1>
+    <div class="error" v-if="applicationError">
+      <h2>ERROR</h2>
+      <p >{{applicationError}}</p>
+    </div>
+    <iframe class="main" v-if="currentUrl" :src="currentUrl"></iframe>
+    <iframe class="info1" :src="infoUrls.info1"></iframe>
+    <iframe class="info2" :src="infoUrls.info2"></iframe>
+    <div class="main" v-if="!currentUrl">
+      <h2>{{inputConfig.noUrlSelectedMsg}}</h2>
+    </div>
   </div>
 </template>
 
@@ -14,22 +20,27 @@ export default {
   name: 'App',
   components: {},
   props: {
-    topics: {
+    mqttConfig: {
       required: true,
       type: Object
     },
-    broker: {
+    inputConfig: {
       required: true,
-      type: String
+      type: Object
+    },
+    infoUrls: {
+      required: true,
+      type: Object
     }
   },
   data () {
     return {
       DEFAULT_TITLE: 'mqtt-device-frontent-service',
       title: 'mqtt-device-frontent-service',
-      currentRadio: '',
+      currentUrl: '',
       startTime: new Date().getTime(),
-      client: null
+      client: null,
+      applicationError: null
     }
   },
   computed: {
@@ -37,101 +48,139 @@ export default {
       return new Date().getTime() - this.startTime
     }
   },
-  beforeMount () {
-  // created () {
+  created () {
     let qos = 1 // at least once ... we do not care about double delivery
-
-    console.log('connecting to ' + this.broker + ' ...')
-
-    this.client = mqtt.connect(this.broker)
-
     let self = this
+
+    console.log('connecting to ' + this.mqttConfig.broker + ' ...')
+    this.client = mqtt.connect(this.mqttConfig.broker, {
+      will: {
+        topic: self.mqttConfig.statusTopic,
+        payload: '0',
+        qos: qos,
+        retain: true
+      },
+      keepalive: 10
+    })
+
     this.client.on('connect', function () {
-      console.log('connected to ' + self.broker)
+      try {
+        console.log('connected to ' + self.mqttConfig.broker)
 
-      Object.entries(self.topics).forEach(
-        ([topic, value]) => {
-          self.client.subscribe(topic, qos)
-          console.log('Subscribed to ' + topic + ' with QOS=' + qos)
-        }
-      )
+        self.client.subscribe(self.mqttConfig.inputTopic, qos)
+        console.log('Subscribed to ' + self.mqttConfig.inputTopic + ' with QoS=' + qos)
 
-      // for (let i = 1; i <= 6; i++) {
-      //   self.client.subscribe(TOPIC + i + '/PRESS_SHORT', 0)
-      //   console.log('Subscribed to ' + TOPIC + i + '/PRESS_SHORT')
-      //   self.client.subscribe(TOPIC + i + '/PRESS_LONG', 0)
-      //   console.log('Subscribed to ' + TOPIC + i + '/PRESS_LONG')
-      // }
+        self.client.publish(self.mqttConfig.statusTopic, '1', {retain: true, qos: qos})
+        console.log('Published 1 to ' + self.mqttConfig.statusTopic + ' with retain=true, QoS=' + qos)
+      } catch (err) {
+        self.applicationError = 'error in onConnect. Error: ' + err
+        console.log('%c [ERROR]: ' + self.applicationError, 'background: yellow; color: red')
+      }
     })
 
     this.client.on('message', function (topic, message) {
-      var msg = "'" + message.toString() + "' on " + topic
-      console.log(msg)
-      self.changeRadio(topic)
+      try {
+        let inputValue = parseInt(message)
+        console.log("Got message '" + inputValue + "' on " + topic)
+        self.changeUrl(inputValue)
+      } catch (err) {
+        self.applicationError = 'error in onMessage. Error: ' + err
+        console.log('%c [ERROR]: ' + self.applicationError, 'background: yellow; color: red')
+      }
     })
   },
   methods: {
-    changeRadio (topic) {
-      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
-        // topic exists and is configured ...
-        let url = this.getUrl(topic)
-        let name = this.getName(topic)
+    changeUrl (inputValue) {
+      if (this.inputConfig.inputValueMapping.hasOwnProperty(inputValue) && this.inputConfig.inputValueMapping[inputValue] !== null) {
+        // inputValue config exists and is configured ...
+        let inputValueConfig = this.inputConfig.inputValueMapping[inputValue]
+        let url = this.getUrl(inputValueConfig)
+        let name = this.getName(inputValueConfig)
 
-        this.currentRadio = url
+        this.currentUrl = url
         this.title = name === '' ? this.DEFAULT_TITLE : name
         console.log('Changed radio to ' + name + ' / ' + url)
-      } else if (this.topics.hasOwnProperty(topic) && this.topics[topic] == null) {
-        // topic exists but is null ... ignore command
       } else {
-        // Missing topic definition
-        this.currentRadio = ''
-        this.title = 'NO ACTION for ' + topic
+        // Missing inputValue config
+        this.currentUrl = ''
+        this.title = 'NO ACTION for ' + inputValue
       }
     },
-    getUrl (topic) {
-      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
-        return this.topics[topic].url
+    getUrl (inputValueConfig) {
+      if (inputValueConfig.hasOwnProperty('url') && inputValueConfig.url !== null) {
+        return inputValueConfig.url
       } else {
         return ''
       }
     },
-    getName (topic) {
-      // if (names.hasOwnProperty(topic)) {
-      if (this.topics.hasOwnProperty(topic) && this.topics[topic] !== null) {
-        // return names[topic]
-        return this.topics[topic].title
+    getName (inputValueConfig) {
+      if (inputValueConfig.hasOwnProperty('title') && inputValueConfig.title !== null) {
+        return inputValueConfig.title
       } else {
         return ''
       }
     }
-    /*,
-    async fetchCocktail() {
-      let response = await fetch('https://www.thecocktaildb.com/api/json/v1/1/random.php')
-      let json = await response.json()
-      this.addTodo(json.drinks[0].strDrink)
-      this.cocktail = json.drinks[0]
-      this.cocktails.push(json.drinks[0])
-    }
-*/
   }
 }
 </script>
 
 <style>
+  body {
+    background: rgb(238, 238, 238);
+  }
+  h1 {
+    color: #0009;
+    font-size: 90px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-top: 40px;
+    text-align: center;
+  }
+  h2 {
+    text-align: center;
+  }
+  p {
+    margin: 10px;
+  }
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', 'Open Sans', Arial, sans-serif;
+    font-size: 18px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
     margin-top: 5px;
   }
-  iframe {
+  .main {
     position: absolute;
     height: 80%;
     border: none;
-    width: 100%;
-    top: 60px;
-    left: 0px;
+    width: 45%;
+    top: 200px;
+    left: 10px;
+  }
+  .info1 {
+    position: absolute;
+    height: 340px;
+    border: none;
+    width: 750px;
+    top: 200px;
+    right: 10px;
+  }
+  .info2 {
+    position: absolute;
+    height: 340px;
+    border: none;
+    width: 750px;
+    top: 560px;
+    right: 10px;
+  }
+  .error {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 500px;
+    height: 150px;
+    background: lightgoldenrodyellow;
+    color: red
   }
 </style>
