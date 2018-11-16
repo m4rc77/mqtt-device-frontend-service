@@ -5,9 +5,9 @@
       <h2>ERROR</h2>
       <p >{{applicationError}}</p>
     </div>
-    <iframe class="main" v-if="currentUrl" :src="currentUrl"></iframe>
-    <iframe class="info1" :src="infoUrls.info1"></iframe>
-    <iframe class="info2" :src="infoUrls.info2"></iframe>
+    <iframe scrolling="no" class="main" v-if="currentUrl" :src="currentUrl"></iframe>
+    <iframe scrolling="no" class="info1" :src="infoUrls.info1"></iframe>
+    <iframe scrolling="no" class="info2" :src="infoUrls.info2"></iframe>
     <div class="main" v-if="!currentUrl">
       <h2>{{inputConfig.noUrlSelectedMsg}}</h2>
     </div>
@@ -157,6 +157,7 @@ export default {
     width: 43%;
     top: 180px;
     left: 10px;
+    overflow-y: hidden;
   }
   .info1 {
     position: absolute;
@@ -165,6 +166,7 @@ export default {
     width: 760px;
     top: 180px;
     right: 10px;
+    overflow-y: hidden;
   }
   .info2 {
     position: absolute;
@@ -173,6 +175,7 @@ export default {
     width: 760px;
     top: 530px;
     right: 10px;
+    overflow-y: hidden;
   }
   .error {
     position: absolute;
@@ -182,5 +185,9 @@ export default {
     height: 150px;
     background: lightgoldenrodyellow;
     color: red
+  }
+  iframe::-webkit-scrollbar {
+    display: none ;
+    width: 0 !important
   }
 </style>
