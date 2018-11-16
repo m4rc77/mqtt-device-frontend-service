@@ -152,26 +152,26 @@ export default {
   }
   .main {
     position: absolute;
-    height: 80%;
+    height: 690px;
     border: none;
-    width: 45%;
-    top: 200px;
+    width: 43%;
+    top: 180px;
     left: 10px;
   }
   .info1 {
     position: absolute;
     height: 340px;
     border: none;
-    width: 750px;
-    top: 200px;
+    width: 760px;
+    top: 180px;
     right: 10px;
   }
   .info2 {
     position: absolute;
     height: 340px;
     border: none;
-    width: 750px;
-    top: 560px;
+    width: 760px;
+    top: 530px;
     right: 10px;
   }
   .error {
