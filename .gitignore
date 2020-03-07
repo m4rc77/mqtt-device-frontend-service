@@ -9,6 +9,7 @@ yarn-error.log*
 /static/config.js
 
 deploy.sh
+deploy*.sh
 
 # Editor directories and files
 .idea
