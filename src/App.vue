@@ -5,7 +5,7 @@
       <h2>ERROR</h2>
       <p >{{applicationError}}</p>
     </div>
-    <iframe scrolling="no" class="main" v-if="currentUrl" :src="currentUrl"></iframe>
+    <iframe scrolling="no" class="main" v-if="currentUrl" :src="currentUrl" allow="autoplay" ></iframe>
     <iframe scrolling="no" class="info1" :src="infoUrls.info1"></iframe>
     <iframe scrolling="no" class="info2" :src="infoUrls.info2"></iframe>
     <div class="main" v-if="!currentUrl">
