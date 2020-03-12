@@ -5,6 +5,7 @@
       <h2>ERROR</h2>
       <p >{{applicationError}}</p>
     </div>
+    <clock />
     <iframe scrolling="no" class="main" v-if="currentUrl" :src="currentUrl" allow="autoplay" ></iframe>
     <iframe scrolling="no" class="info1" :src="infoUrls.info1"></iframe>
     <iframe scrolling="no" class="info2" :src="infoUrls.info2"></iframe>
@@ -16,9 +17,12 @@
 
 <script>
 import mqtt from 'mqtt'
+import Clock from './components/Clock'
 export default {
   name: 'App',
-  components: {},
+  components: {
+    Clock
+  },
   props: {
     mqttConfig: {
       required: true,
