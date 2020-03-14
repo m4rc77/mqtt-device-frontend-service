@@ -162,7 +162,7 @@ export default {
   }
   .date-text {
     color: #0009;
-    width: 150px;
+    width: 200px;
     margin: 0;
     position: relative;
     top: 150px;
