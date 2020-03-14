@@ -39,8 +39,8 @@ export default {
   },
   data () {
     return {
-      DEFAULT_TITLE: 'mqtt-device-frontent-service',
-      title: 'mqtt-device-frontent-service',
+      DEFAULT_TITLE: 'MQTT DMS Frontend',
+      title: 'MQTT DMS Frontend',
       currentUrl: '',
       startTime: new Date().getTime(),
       client: null,
