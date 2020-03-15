@@ -1,6 +1,5 @@
 <!--This clock is based on https://vuejsexamples.com/a-text-based-and-analog-clock-with-vue-js/-->
 <template v-if="tick">
-<!--  <analog-clock :minute="time.minutes" :tick="tick"></analog-clock>-->
   <figure class="analog-clock">
     <figcaption class="analog-clock__face">
       <span v-for="n in 60"
@@ -44,11 +43,16 @@ export default {
       if (this.tick % 300 === 0) {
         let date = new Date()
         let [h, m, s] = [date.getHours(), date.getMinutes(), date.getSeconds()]
+        h = h % 12
         this.rotation = {
           hours: (h * 30) + (m * 0.5),
           minutes: (m * 6) + (s * 0.1),
           seconds: s * 6
         }
+        // adjust tick to seconds ...
+        this.tick = s
+
+        // set date info
         this.date = date.toDateString()
         let dateOptions = {
           weekday: 'short',
@@ -59,8 +63,8 @@ export default {
         this.date = date.toLocaleDateString('de-CH', dateOptions)
       } else {
         this.rotation.seconds += 6 // --> 360 / 60
-        this.rotation.minutes += 0.1 // --> 360 / 60 / 60
         if (this.tick % 60 === 0) {
+          this.rotation.minutes += 6 // --> 360 / 60
           this.rotation.hours += 0.5 // 360 / 12 / 60
         }
       }
@@ -141,10 +145,10 @@ export default {
     height: calc(100% / 3);
     width: 3px;
     border-radius: 3px;
-    -webkit-transition: -webkit-transform 60s linear;
-    transition: -webkit-transform 60s linear;
-    transition: transform 60s linear;
-    transition: transform 60s linear, -webkit-transform 60s linear;
+    -webkit-transition: -webkit-transform 1s linear;
+    transition: -webkit-transform 1s linear;
+    transition: transform 1s linear;
+    transition: transform 1s linear, -webkit-transform 1s linear;
   }
   .analog-clock__hand.-seconds {
     width: 2px;
@@ -152,10 +156,10 @@ export default {
     border-radius: 0;
     /*background-color: #edbec5;*/
     background-color: #ed6062;
-    -webkit-transition: -webkit-transform 100ms cubic-bezier(0.6, 0.05, 0, 1.6);
-    transition: -webkit-transform 100ms cubic-bezier(0.6, 0.05, 0, 1.6);
-    transition: transform 100ms cubic-bezier(0.6, 0.05, 0, 1.6);
-    transition: transform 100ms cubic-bezier(0.6, 0.05, 0, 1.6), -webkit-transform 100ms cubic-bezier(0.6, 0.05, 0, 1.6);
+    -webkit-transition: -webkit-transform 100ms linear;
+    transition: -webkit-transform 100ms linear;
+    transition: transform 100ms linear;
+    transition: transform 100ms linear, -webkit-transform 100ms linear;
   }
   .analog-clock__hand.-seconds::after {
     height: 12.5%;
