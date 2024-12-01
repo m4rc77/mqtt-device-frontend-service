@@ -159,8 +159,8 @@ export default {
     height: 690px;
     border: none;
     width: 43%;
-    top: 180px;
-    left: 10px;
+    top: 230px;
+    left: 40px;
     overflow-y: hidden;
   }
   .info1 {
@@ -168,8 +168,8 @@ export default {
     height: 340px;
     border: none;
     width: 760px;
-    top: 180px;
-    right: 10px;
+    top: 230px;
+    right: 40px;
     overflow-y: hidden;
   }
   .info2 {
@@ -177,14 +177,14 @@ export default {
     height: 340px;
     border: none;
     width: 760px;
-    top: 530px;
-    right: 10px;
+    top: 580px;
+    right: 40px;
     overflow-y: hidden;
   }
   .error {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 40px;
     width: 500px;
     height: 150px;
     background: lightgoldenrodyellow;

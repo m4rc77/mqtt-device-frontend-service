@@ -82,7 +82,7 @@ export default {
 <style>
   .analog-clock {
     top: 60px;
-    right: 1px;
+    right: 25px;
     width: 140px;
     height: 140px;
     position: absolute;
@@ -166,10 +166,11 @@ export default {
   }
   .date-text {
     color: #0009;
-    width: 200px;
-    margin: 0;
+    width: 220px;
     position: relative;
     top: 150px;
     font-weight: bold;
+    margin: 0 0 0 -40px;
+    text-align: center;
   }
 </style>
